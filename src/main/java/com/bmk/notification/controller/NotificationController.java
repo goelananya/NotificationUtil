@@ -1,8 +1,10 @@
 package com.bmk.notification.controller;
 
 import com.bmk.notification.dto.EmailDto;
+import com.bmk.notification.dto.ResponseDto;
 import com.bmk.notification.dto.SmsDto;
-import com.bmk.notification.util.TokenUtil;
+import com.bmk.notification.exceptions.AuthorizationException;
+import com.bmk.notification.util.RestClient;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -13,6 +15,7 @@ import com.sendgrid.helpers.mail.objects.Email;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -21,11 +24,15 @@ import java.io.IOException;
 @RestController
 public class NotificationController {
 
+    private static RestClient restClient;
+
+    public NotificationController(RestClient restClient) {
+        this.restClient = restClient;
+    }
+
     @PostMapping("email")
-    public String sendEmail(@RequestBody EmailDto emailDto, @RequestHeader String token) {
-
-        if(!TokenUtil.authorizeApi(token)) return "Unauthorized user";
-
+    public ResponseEntity sendEmail(@RequestBody EmailDto emailDto, @RequestHeader String token) throws AuthorizationException, IOException {
+        restClient.authorize(token, "alpha");
         String FROM_EMAIL = System.getenv("fromEmail");
         String API_KEY = System.getenv("SENDGRID_API_KEY");
 
@@ -36,22 +43,16 @@ public class NotificationController {
         Mail mail = new Mail(from, subject, to, content);
         SendGrid sg = new SendGrid(API_KEY);
         Request request = new Request();
-        try {
-            request.setMethod(Method.POST);
-            request.setEndpoint("mail/send");
-            request.setBody(mail.build());
-            Response response = sg.api(request);
-            System.out.println(response.getStatusCode());
-            System.out.println(response.getBody());
-            System.out.println(response.getHeaders());
-        } catch (IOException ex) {
-            //throw ex;
-        }
-        return "Success";
+        request.setMethod(Method.POST);
+        request.setEndpoint("mail/send");
+        request.setBody(mail.build());
+        Response response = sg.api(request);
+        return ResponseEntity.ok(new ResponseDto("200", "Success"));
     }
 
     @PostMapping("sms")
-    public String sendSms(@RequestBody SmsDto smsDto, @RequestHeader String token) {
+    public ResponseEntity sendSms(@RequestBody SmsDto smsDto, @RequestHeader String token) throws AuthorizationException {
+        restClient.authorize(token, "alpha");
         String ACCOUNT_SID = System.getenv("twilioSid");
         String AUTH_TOKEN = System.getenv("twilioToken");
         String TWILIO_PHONE = System.getenv("twilioPhone");
@@ -62,6 +63,6 @@ public class NotificationController {
                         new PhoneNumber(TWILIO_PHONE), // from
                         smsDto.getMessage())
                 .create();
-        return "Success";
+        return ResponseEntity.ok(new ResponseDto("200", "Success"));
     }
 }
