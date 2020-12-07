@@ -39,7 +39,7 @@ public class NotificationController {
         Email from = new Email(FROM_EMAIL);
         String subject = emailDto.getSubject();
         Email to = new Email(emailDto.getToEmail());
-        Content content = new Content("text/plain", emailDto.getContent());
+        Content content = new Content("text/html", emailDto.getContent());
         Mail mail = new Mail(from, subject, to, content);
         SendGrid sg = new SendGrid(API_KEY);
         Request request = new Request();
