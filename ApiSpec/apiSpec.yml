@@ -1,0 +1,120 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: COMMONUTIL
+  contact: {}
+host: 'localhost:8080'
+basePath: /email
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /email:
+    post:
+      summary: SendEmail
+      tags:
+        - Misc
+      operationId: SendEmail
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: token
+          in: header
+          required: true
+          type: string
+          description: ''
+        - name: Body
+          in: body
+          required: true
+          description: ''
+          schema:
+            $ref: '#/definitions/SendEmailRequest'
+      responses:
+        '200':
+          description: ''
+          headers: {}
+  /sms:
+    post:
+      summary: SendSms
+      tags:
+        - Misc
+      operationId: SendSms
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: token
+          in: header
+          required: true
+          type: string
+          description: ''
+        - name: Body
+          in: body
+          required: true
+          description: ''
+          schema:
+            $ref: '#/definitions/SendSmsRequest'
+      responses:
+        '200':
+          description: ''
+          headers: {}
+  /signature:
+    get:
+      summary: GetAuthFileUpload
+      tags:
+        - Misc
+      operationId: GetAuthFileUpload
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: token
+          in: header
+          required: true
+          type: string
+          description: ''
+      responses:
+        '200':
+          description: ''
+          headers: {}
+definitions:
+  SendEmailRequest:
+    title: SendEmailRequest
+    example:
+      subject: Common Util Testing - 7
+      toEmail: ananya.goel10@gmail.com
+      content: 'Hello Ananya, I am testing common util for notification.'
+    type: object
+    properties:
+      subject:
+        type: string
+      toEmail:
+        type: string
+      content:
+        type: string
+    required:
+      - subject
+      - toEmail
+      - content
+  SendSmsRequest:
+    title: SendSmsRequest
+    example:
+      toPhone: '+917895710210'
+      message: Testing common util
+    type: object
+    properties:
+      toPhone:
+        type: string
+      message:
+        type: string
+    required:
+      - toPhone
+      - message
+tags:
+  - name: Misc
+    description: ''
