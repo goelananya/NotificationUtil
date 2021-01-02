@@ -1,5 +1,6 @@
 package com.bmk.notification.controller;
 
+import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
@@ -35,7 +36,7 @@ public class FileUploadController {
 
 
     @GetMapping("upload/signature")
-    public ResponseEntity getFileUploadDto(@RequestHeader String token) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException, AuthorizationException {
+    public ResponseEntity getFileUploadDto(@RequestHeader String token) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException, AuthorizationException, IOException {
         restClient.authorize(token, "gamma");
         String privateKey = System.getenv("imagekitpk");
         Long expiry = System.currentTimeMillis()+ TimeUnit.HOURS.toMillis(1);
