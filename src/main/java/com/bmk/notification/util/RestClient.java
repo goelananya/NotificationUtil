@@ -38,24 +38,20 @@ public class RestClient {
 
     public void authorize(String jwt, String apiType) throws AuthorizationException, IOException {
             TimeLoggerUtil timeLoggerUtil = new TimeLoggerUtil("authorize", "", this);
-            logger.info("Calling authorize service");
-            String baseUrl = "https://bmkauth.herokuapp.com/api/v1/user/authorize";
-            HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("token", jwt);
-            headers.set("apiType", apiType);
-            HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
             try {
-                Object object = restTemplate.exchange(baseUrl, HttpMethod.POST, entity, Object.class).getBody();
-            } catch (Exception e) {
+                logger.info("Calling authorize service");
+                TokenUtil.getUserType(jwt).equals(apiType);
+                Long.parseLong(TokenUtil.getUserId(jwt));
+             } catch (Exception e){
+                logger.info(e.getMessage());
                 throw new AuthorizationException();
             }
             timeLoggerUtil.methodEnd();
     }
 
     @Async
-    public void sendEmail(String subject, String toEmail, String body) throws IOException {
+    public void sendEmailSendGrid(String subject, String toEmail, String body) throws IOException {
+        TimeLoggerUtil timeLoggerUtil = new TimeLoggerUtil("sendEmailSendGrid", "", this);
         Email from = new Email(FROM_EMAIL);
         Email to = new Email(toEmail);
         Content content = new Content("text/html", body);
@@ -66,5 +62,6 @@ public class RestClient {
         request.setEndpoint("mail/send");
         request.setBody(mail.build());
         Response response = sg.api(request);
+        timeLoggerUtil.methodEnd();
     }
 }

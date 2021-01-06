@@ -26,8 +26,10 @@ public class NotificationController {
 
     @PostMapping("email")
     public ResponseEntity sendEmail(@RequestBody EmailDto emailDto, @RequestHeader String token) throws AuthorizationException, IOException {
+        TimeLoggerUtil timeLoggerUtil = new TimeLoggerUtil("sendEmail", emailDto.toString(), restClient);
         restClient.authorize(token, "alpha");
-        restClient.sendEmail(emailDto.getSubject(), emailDto.getToEmail(), emailDto.getContent());
+        restClient.sendEmailSendGrid(emailDto.getSubject(), emailDto.getToEmail(), emailDto.getContent());
+        timeLoggerUtil.methodEnd();
         return ResponseEntity.ok(new ResponseDto("200", "Success"));
     }
 
