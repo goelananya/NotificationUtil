@@ -42,6 +42,9 @@ public class NotificationController {
         String TWILIO_PHONE = System.getenv("twilioPhone");
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
+        //TODO: handle in better way
+        if(smsDto.getToPhone().length()==12)        smsDto.setToPhone("+"+smsDto.getToPhone());
+
         Message message = Message
                 .creator(new PhoneNumber(smsDto.getToPhone()), // to
                         new PhoneNumber(TWILIO_PHONE), // from
