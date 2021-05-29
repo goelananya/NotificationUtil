@@ -62,8 +62,8 @@ public class NotificationController {
     }
 
     @PostMapping("/receive/sms")
-    public ResponseEntity receiveSms(@RequestParam Body body) {
-        log.info(body.getMessage());
+    public ResponseEntity receiveSms(@RequestParam String body) {
+        log.info(body);
         return null;
     }
 }
