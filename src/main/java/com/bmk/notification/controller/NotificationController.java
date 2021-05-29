@@ -7,15 +7,22 @@ import com.bmk.notification.exceptions.AuthorizationException;
 import com.bmk.notification.util.RestClient;
 import com.bmk.notification.util.TimeLoggerUtil;
 import com.twilio.Twilio;
+import com.twilio.example.TwiMLResponseExample;
 import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.twiml.TwiML;
+import com.twilio.twiml.messaging.Body;
 import com.twilio.type.PhoneNumber;
+import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import java.io.IOException;
 
 @RequestMapping("email")
 @RestController
+@Log
 public class NotificationController {
 
     private static RestClient restClient;
@@ -52,5 +59,11 @@ public class NotificationController {
                 .create();
         timeLoggerUtil.methodEnd();
         return ResponseEntity.ok(new ResponseDto("200", "Success"));
+    }
+
+    @PostMapping("/receive/sms")
+    public ResponseEntity receiveSms(@RequestParam Body body) {
+        log.info(body.getMessage());
+        return null;
     }
 }
